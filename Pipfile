@@ -4,6 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pygments = "*"
+setuptools = "*"
+twine = "*"
+fire = "*"
 
 [packages]
 chardet = "*"

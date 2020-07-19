@@ -16,7 +16,7 @@ from subfix.core.exceptions import SubfixException
 from subfix.core.structs import Manager
 from subfix.utils.exceptions import FileAlreadyExistedError
 from subfix.converter.exceptions import InvalidSourceDirectoryError, EncodingError, \
-    InvalidTargetDirectoryError, TargetDirectoryIsNotEmptyError
+    InvalidTargetDirectoryError, TargetDirectoryIsNotEmptyError, BatchConvertError
 
 
 class ConverterManager(Manager):
@@ -235,7 +235,7 @@ class ConverterManager(Manager):
             sequence_naming = True
 
         silent = options.get('silent', True)
-        failed_subtitles = []
+        failed_subtitles = dict()
         subtitles = self._discover_subtitles(source_directory,
                                              extensions=options.get('extensions'))
         for sequence, subtitle in enumerate(subtitles, start=1):
@@ -245,19 +245,23 @@ class ConverterManager(Manager):
 
             try:
                 self.convert(subtitle, target_file=fixed_name, **options)
-            except SubfixException:
+            except SubfixException as error:
                 if silent is not True:
                     raise
-                failed_subtitles.append(subtitle)
+                failed_subtitles[subtitle] = str(error)
+                continue
             except Exception as error:
                 if silent is not True:
                     raise EncodingError('Encoding error occurred on file [{sub}].'
                                         'error message: [{error}]'
                                         .format(sub=subtitle, error=error))
-                failed_subtitles.append(subtitle)
+                failed_subtitles[subtitle] = str(error)
                 continue
 
-        return list(set(failed_subtitles))
+        if len(failed_subtitles) > 0:
+            raise BatchConvertError('[{num}] subtitle files failed to convert.'
+                                    .format(num=len(failed_subtitles)),
+                                    data=failed_subtitles)
 
     def _discover_subtitles(self, source_directory, extensions=None, **options):
         """

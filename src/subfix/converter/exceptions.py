@@ -39,3 +39,10 @@ class TargetDirectoryIsNotEmptyError(SubfixException):
     target directory is not empty error.
     """
     pass
+
+
+class BatchConvertError(SubfixException):
+    """
+    batch convert error.
+    """
+    pass

@@ -4,14 +4,14 @@ core exceptions module.
 """
 
 
-class CoreException(Exception):
+class SubfixException(Exception):
     """
     base class for all application exceptions.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        initializes an instance of CoreException.
+        initializes an instance of SubfixException.
 
         :keyword dict data: extra data for exception.
         """
@@ -52,35 +52,21 @@ class CoreException(Exception):
         return self._description
 
 
-class CoreBusinessException(CoreException):
+class SubfixAttributeError(SubfixException, AttributeError):
     """
-    base class for all application business exceptions.
-    """
-    pass
-
-
-class CoreAttributeError(CoreException, AttributeError):
-    """
-    core attribute error.
+    subfix attribute error.
     """
     pass
 
 
-class ContextAttributeError(CoreAttributeError):
+class SubfixNotImplementedError(SubfixException, NotImplementedError):
     """
-    context attribute error.
-    """
-    pass
-
-
-class CoreNotImplementedError(CoreException, NotImplementedError):
-    """
-    core not implemented error.
+    subfix not implemented error.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        initializes an instance of CoreNotImplementedError.
+        initializes an instance of SubfixNotImplementedError.
 
         :keyword dict data: extra data for exception.
         """
@@ -89,57 +75,57 @@ class CoreNotImplementedError(CoreException, NotImplementedError):
                          *args, **kwargs)
 
 
-class CoreTypeError(CoreException, TypeError):
+class SubfixTypeError(SubfixException, TypeError):
     """
-    core type error.
-    """
-    pass
-
-
-class CoreValueError(CoreException, ValueError):
-    """
-    core value error.
+    subfix type error.
     """
     pass
 
 
-class CoreKeyError(CoreException, KeyError):
+class SubfixValueError(SubfixException, ValueError):
     """
-    core key error.
-    """
-    pass
-
-
-class CoreAssertionError(CoreException, AssertionError):
-    """
-    core assertion error.
+    subfix value error.
     """
     pass
 
 
-class CoreNotADirectoryError(CoreException, NotADirectoryError):
+class SubfixKeyError(SubfixException, KeyError):
     """
-    core not a directory error.
-    """
-    pass
-
-
-class CoreFileNotFoundError(CoreException, FileNotFoundError):
-    """
-    core file not found error.
+    subfix key error.
     """
     pass
 
 
-class CoreNameError(CoreException, NameError):
+class SubfixAssertionError(SubfixException, AssertionError):
     """
-    core name error.
+    subfix assertion error.
     """
     pass
 
 
-class InvalidHookTypeError(CoreException):
+class SubfixNotADirectoryError(SubfixException, NotADirectoryError):
     """
-    invalid hook type error.
+    subfix not a directory error.
+    """
+    pass
+
+
+class SubfixFileNotFoundError(SubfixException, FileNotFoundError):
+    """
+    subfix file not found error.
+    """
+    pass
+
+
+class SubfixNameError(SubfixException, NameError):
+    """
+    subfix name error.
+    """
+    pass
+
+
+class SubfixFileExistsError(SubfixException, FileExistsError):
+    """
+    subfix file exists error.
     """
     pass

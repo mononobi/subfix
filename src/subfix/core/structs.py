@@ -6,8 +6,7 @@ core structs module.
 from threading import Lock
 from abc import abstractmethod
 
-from subfix.core.exceptions import CoreAttributeError, ContextAttributeError, \
-    CoreNotImplementedError
+from subfix.core.exceptions import SubfixNotImplementedError
 
 
 class SingletonMetaBase(type):
@@ -36,12 +35,12 @@ class SingletonMetaBase(type):
         """
         gets a value indicating there is a registered instance.
 
-        :raises CoreNotImplementedError: core not implemented error.
+        :raises SubfixNotImplementedError: subfix not implemented error.
 
         :rtype: bool
         """
 
-        raise CoreNotImplementedError()
+        raise SubfixNotImplementedError()
 
     @abstractmethod
     def _register_instance(cls, instance):
@@ -50,63 +49,22 @@ class SingletonMetaBase(type):
 
         :param object instance: instance to be registered.
 
-        :raises CoreNotImplementedError: core not implemented error.
+        :raises SubfixNotImplementedError: subfix not implemented error.
         """
 
-        raise CoreNotImplementedError()
+        raise SubfixNotImplementedError()
 
     @abstractmethod
     def _get_instance(cls):
         """
         gets the registered instance.
 
-        :raises CoreNotImplementedError: core not implemented error.
+        :raises SubfixNotImplementedError: subfix not implemented error.
 
         :rtype: object
         """
 
-        raise CoreNotImplementedError()
-
-
-class UniqueSingletonMeta(SingletonMetaBase):
-    """
-    unique singleton meta class.
-
-    this is a thread-safe implementation of singleton.
-    this class only allows a single unique object for all descendant types.
-
-    for example: {Base -> UniqueSingletonMeta, A -> Base, B -> A}
-    if some_object = Base() then always Base() = A() = B() = some_object.
-    or if some_object = A() then always A() = B() = some_object != Base().
-    """
-
-    _instance = None
-    _lock = Lock()
-
-    def _has_instance(cls):
-        """
-        gets a value indicating that there is a registered instance.
-
-        :rtype: bool
-        """
-
-        return cls._instance is not None
-
-    def _register_instance(cls, instance):
-        """
-        registers the given instance.
-        """
-
-        cls._instance = instance
-
-    def _get_instance(cls):
-        """
-        gets the registered instance.
-
-        :rtype: object
-        """
-
-        return cls._instance
+        raise SubfixNotImplementedError()
 
 
 class MultiSingletonMeta(SingletonMetaBase):
@@ -150,57 +108,6 @@ class MultiSingletonMeta(SingletonMetaBase):
         """
 
         return cls._instances.get(str(cls))
-
-
-class DTO(dict):
-    """
-    context class for storing objects in every layer.
-
-    it's actually a dictionary with the capability to treat keys as instance attributes.
-    this class's objects are hashable and could be used as a dict key if needed.
-    """
-
-    def __getattr__(self, name):
-        if name in self:
-            return self.get(name)
-
-        raise CoreAttributeError('Property [{name}] not found.'.format(name=name))
-
-    def __getitem__(self, item):
-        if item in self:
-            return self.get(item)
-
-        raise CoreAttributeError('Property [{name}] not found.'.format(name=item))
-
-    def __setattr__(self, name, value):
-        self[name] = value
-
-    def __hash__(self):
-        signature = None
-        try:
-            # try to sort by keys if all keys are same type.
-            signature = sorted(self.items())
-        except TypeError:
-            # fallback to unsorted keys when key types are incomparable.
-            signature = self.items()
-        return hash(tuple(signature))
-
-    def __eq__(self, other):
-        if not isinstance(other, DTO):
-            return False
-
-        self_len = len(self)
-        other_len = len(other)
-        if self_len != other_len:
-            return False
-
-        if self_len == 0:
-            return True
-
-        return hash(self) == hash(other)
-
-    def __ne__(self, other):
-        return not self == other
 
 
 class CoreObject(object):
@@ -298,60 +205,6 @@ class CoreObject(object):
         """
 
         return super().__setattr__(name, value)
-
-
-class Context(DTO):
-    """
-    context class for storing objects in every layer.
-
-    it's actually a dictionary with the capability to add keys directly.
-    """
-
-    attribute_error = ContextAttributeError
-    attribute_error_message = 'Property [{name}] not found.'
-
-    def __getattr__(self, name):
-        if name in self:
-            return self.get(name)
-
-        self._raise_key_error(name)
-
-    def __getitem__(self, item):
-        if item in self:
-            return self.get(item)
-
-        self._raise_key_error(item)
-
-    def _raise_key_error(self, key):
-        """
-        raises an error for given key.
-
-        :param object key: key object that caused the error.
-
-        :raises ContextAttributeError: context attribute error.
-        """
-
-        raise self.attribute_error(self.attribute_error_message.format(name=key))
-
-
-class HookSingletonMeta(MultiSingletonMeta):
-    """
-    hook singleton meta class.
-
-    this is a thread-safe implementation of singleton.
-    """
-
-    _instances = dict()
-    _lock = Lock()
-
-
-class Hook(CoreObject, metaclass=HookSingletonMeta):
-    """
-    base hook class.
-
-    all application hook classes must be subclassed from this one.
-    """
-    pass
 
 
 class ManagerSingletonMeta(MultiSingletonMeta):

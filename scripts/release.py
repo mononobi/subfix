@@ -246,7 +246,7 @@ class ReleaseManager:
         clears released files.
         """
 
-        self._execute_command('cd .. ; rm -r build/ dist/ ; cd src ; rm -r subfix.egg-info/')
+        self._execute_command('cd .. ; rm -r build/ dist/ ; cd src ; rm -r subfixio.egg-info/')
 
     def _execute_command(self, command):
         """

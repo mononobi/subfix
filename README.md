@@ -13,7 +13,7 @@ Subfix is a utility package which helps to convert subtitle file encodings.
 
 **Install using pip**:
 
-**`pip install subfix`**
+**`pip install subfixio`**
 
 # Example:
 

@@ -27,7 +27,7 @@ TEST_PACKAGES = PACKAGES + [
 ]
 
 setup(
-    name='subfix',
+    name='subfixio',
     version=VERSION,
     url='https://github.com/mononobi/subfix',
     project_urls={
@@ -42,7 +42,8 @@ setup(
     description='A simple subtitle encoding fixer.',
     long_description=README,
     long_description_content_type='text/markdown',
-    keywords='subfix python movie subtitle encoding utf-8 converter batch-converter srt',
+    keywords='subfix subfixio python movie subtitle encoding '
+             'utf-8 converter batch-converter srt',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Plugins',
